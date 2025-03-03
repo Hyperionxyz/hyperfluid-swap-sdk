@@ -6,6 +6,7 @@ Note: we only handle the first operation here
 */
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 dotenv.config()
 
@@ -16,6 +17,7 @@ function fetchGraphQL(
 ) {
   return fetch(process.env.HYPERFLUID_API, {
     method: 'POST',
+    agent: new HttpsProxyAgent('http://127.0.0.1:7890'),
     body: JSON.stringify({
       query: operationsDoc,
       variables,
