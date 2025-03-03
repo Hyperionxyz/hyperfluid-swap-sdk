@@ -5,13 +5,16 @@ to your service.
 Note: we only handle the first operation here
 */
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config()
 
 function fetchGraphQL(
   operationsDoc: string,
   operationName: string,
   variables: Record<string, any>
 ) {
-  return fetch('https://api.hyperfluid.xyz/v1/graphql', {
+  return fetch(process.env.HYPERFLUID_API, {
     method: 'POST',
     body: JSON.stringify({
       query: operationsDoc,

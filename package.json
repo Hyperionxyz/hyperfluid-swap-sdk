@@ -22,7 +22,8 @@
     "graphql-request": "7.1.2",
     "https-proxy-agent": "7.0.6",
     "node-fetch": "^3.3.2",
-    "@aptos-labs/ts-sdk": "1.35.0"
+    "@aptos-labs/ts-sdk": "1.35.0",
+    "dotenv": "^16.4.7"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",
