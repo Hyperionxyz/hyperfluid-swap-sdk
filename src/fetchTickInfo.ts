@@ -4,7 +4,6 @@ to your service.
 
 Note: we only handle the first operation here
 */
-import { HttpsProxyAgent } from 'https-proxy-agent';
 import fetch from 'node-fetch';
 
 function fetchGraphQL(
@@ -14,7 +13,6 @@ function fetchGraphQL(
 ) {
   return fetch('https://api.hyperfluid.xyz/v1/graphql', {
     method: 'POST',
-    agent: new HttpsProxyAgent('http://127.0.0.1:7890'),
     body: JSON.stringify({
       query: operationsDoc,
       variables,
