@@ -1,8 +1,7 @@
 {
   "name": "hyperfluid-sdk",
   "version": "1.0.2",
-  "main": "dist/entities/index.ts",
-  "types": "dist/entities/index.d.ts",
+  "main": "src/entities/index.ts",
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -21,9 +20,6 @@
     "typescript": "^5.8.2"
   },
   "private": false,
-  "scripts": {
-    "build": "tsx src/utils/index.ts",
-    "prepublishOnly": "pnpm run build"
-  },
+  "scripts": {},
   "workspaces": []
 }
