@@ -2,10 +2,10 @@ import { BigNumber } from '@ethersproject/bignumber'
 import invariant from 'tiny-invariant'
 import { BaseCurrency } from './baseCurrency'
 import { Currency } from '@uniswap/sdk-core'
+import {AccountAddress, AccountAddressInput} from '@aptos-labs/ts-sdk'
 
 export function checkValidAddress(address: string): string {
-    const startsWith0xLen64HexRegex = /^0x[0-9a-fA-F]{64}$/
-    if (startsWith0xLen64HexRegex.test(address)) {
+    if (AccountAddress.isValid({input: address})) {
       return address
     }
   

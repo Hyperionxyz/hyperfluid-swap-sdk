@@ -11,6 +11,9 @@ importers:
       '@aptos-labs/ts-sdk':
         specifier: 1.35.0
         version: 1.35.0(axios@1.8.1)(got@11.8.6)
+      '@ethersproject/bignumber':
+        specifier: 5.8.0
+        version: 5.8.0
       '@uniswap/sdk-core':
         specifier: ^7.6.0
         version: 7.6.0
