@@ -417,14 +417,14 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
     )
 
     const numPools = routes.map(({ route }) => route.pools.length).reduce((total, cur) => total + cur, 0)
-    const poolAddressSet = new Set<string>()
-    for (const { route } of routes) {
-      for (const pool of route.pools) {
-        poolAddressSet.add(Pool.getAddress(pool.token0, pool.token1, pool.fee))
-      }
-    }
+    // const poolAddressSet = new Set<string>()
+    // for (const { route } of routes) {
+    //   for (const pool of route.pools) {
+    //     poolAddressSet.add(Pool.getAddress(pool.token0, pool.token1, pool.fee))
+    //   }
+    // }
 
-    invariant(numPools === poolAddressSet.size, 'POOLS_DUPLICATED')
+    // invariant(numPools === poolAddressSet.size, 'POOLS_DUPLICATED')
 
     this.swaps = routes
     this.tradeType = tradeType

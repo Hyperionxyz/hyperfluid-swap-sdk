@@ -1,4 +1,5 @@
-import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
+import { CurrencyAmount, TradeType } from '@uniswap/sdk-core'
+import { Token } from './entities/token'
 import { FeeAmount } from './constants'
 import { Pool } from './entities/pool'
 import { Route, Trade } from './entities'
@@ -7,15 +8,16 @@ import JSBI from 'jsbi'
 
 async function main() {
 
-    const token0 = new Token(1, '0x0000000000000000000000000000000000000001', 6, 't0', 'token0')
-    const token1 = new Token(1, '0x0000000000000000000000000000000000000002', 6, 't1', 'token1')
+    const token0 = new Token(1, '0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b', 6, 'usdt', 'token0')
+    const token1 = new Token(1, '0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b', 6, 'usdc', 'token1')
 
     // fetch pool tick infos.
     // fetchMyQuery take two params.
     // first one is tick offset, it declares how much offset from current tick u want both side.
     // second one is pool id (pool object address).
     // when give offset 0, it means return all the available ticks.
-    let a: any = await fetchMyQuery(100, "0xd3894aca06d5f42b27c89e6f448114b3ed6a1ba07f992a58b2126c71dd83c127");
+    let poolId = '0xd3894aca06d5f42b27c89e6f448114b3ed6a1ba07f992a58b2126c71dd83c127';
+    let a: any = await fetchMyQuery(100, poolId);
     const poolInfo = a.data.api.getPoolTickInfo;
 
     const feeAmount = FeeAmount.LOWEST
@@ -53,5 +55,5 @@ async function main() {
 (async () => {
     setInterval(async ()=>{
         await main()
-    }, 5000);
+    }, 1000);
 })()

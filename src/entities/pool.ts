@@ -1,9 +1,9 @@
-import { BigintIsh, CurrencyAmount, Price, Token } from '@uniswap/sdk-core'
+import { BigintIsh, CurrencyAmount, Price } from '@uniswap/sdk-core'
+import { Token } from './token'
 import JSBI from 'jsbi'
 import invariant from 'tiny-invariant'
 import { FACTORY_ADDRESS, FeeAmount, TICK_SPACINGS } from '../constants'
 import { NEGATIVE_ONE, Q128 } from '../internalConstants'
-import { computePoolAddress } from '../utils/computePoolAddress'
 import { v3Swap } from '../utils/v3swap'
 import { TickMath } from '../utils/tickMath'
 import { Tick, TickConstructorArgs } from './tick'
@@ -30,21 +30,21 @@ export class Pool {
   private _token0Price?: Price<Token, Token>
   private _token1Price?: Price<Token, Token>
 
-  public static getAddress(
-    tokenA: Token,
-    tokenB: Token,
-    fee: FeeAmount,
-    initCodeHashManualOverride?: string,
-    factoryAddressOverride?: string
-  ): string {
-    return computePoolAddress({
-      factoryAddress: factoryAddressOverride ?? FACTORY_ADDRESS,
-      fee,
-      tokenA,
-      tokenB,
-      initCodeHashManualOverride,
-    })
-  }
+  // public static getAddress(
+  //   tokenA: Token,
+  //   tokenB: Token,
+  //   fee: FeeAmount,
+  //   initCodeHashManualOverride?: string,
+  //   factoryAddressOverride?: string
+  // ): string {
+  //   return computePoolAddress({
+  //     factoryAddress: factoryAddressOverride ?? FACTORY_ADDRESS,
+  //     fee,
+  //     tokenA,
+  //     tokenB,
+  //     initCodeHashManualOverride,
+  //   })
+  // }
 
   /**
    * Construct a pool
