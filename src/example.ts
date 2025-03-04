@@ -1,9 +1,9 @@
 import { CurrencyAmount, TradeType } from "@uniswap/sdk-core";
-import JSBI from "jsbi";
 import { Route, Trade } from "./entities";
 import { Pool } from "./entities/pool";
 import { Token } from "./entities/token";
 import { fetchPoolTickInfo } from "./fetchTickInfo";
+import { SqrtPriceMath } from "./utils";
 import { getAmountOut } from "./viewGetAmount";
 
 async function main() {
@@ -33,10 +33,7 @@ async function main() {
   const poolInfo = a.data.api.getPoolTickInfo;
 
   const feeAmount = poolInfo.feeRate;
-  const sqrtRatioX96 = JSBI.leftShift(
-    JSBI.BigInt(poolInfo.sqrtPrice),
-    JSBI.BigInt(32)
-  );
+  const sqrtRatioX96 = SqrtPriceMath.getSqrtPrice(poolInfo.sqrtPrice);
   const liquidity = poolInfo.activeLPAmount;
   const currentTick = poolInfo.currentTick;
   let ticks = poolInfo.ticks;

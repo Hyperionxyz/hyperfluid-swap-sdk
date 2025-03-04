@@ -120,6 +120,10 @@ export abstract class SqrtPriceMath {
         );
   }
 
+  public static getSqrtPrice(sqrtPrice: number): JSBI {
+    return JSBI.leftShift(JSBI.BigInt(sqrtPrice), JSBI.BigInt(32));
+  }
+
   private static getNextSqrtPriceFromAmount0RoundingUp(
     sqrtPX96: JSBI,
     liquidity: JSBI,
