@@ -1,34 +1,34 @@
-import { BigintIsh, CurrencyAmount, Price } from '@uniswap/sdk-core'
-import { Token } from './token'
-import JSBI from 'jsbi'
-import invariant from 'tiny-invariant'
-import { FACTORY_ADDRESS, FeeAmount, TICK_SPACINGS } from '../constants'
-import { NEGATIVE_ONE, Q128 } from '../internalConstants'
-import { v3Swap } from '../utils/v3swap'
-import { TickMath } from '../utils/tickMath'
-import { Tick, TickConstructorArgs } from './tick'
-import { NoTickDataProvider, TickDataProvider } from './tickDataProvider'
-import { TickListDataProvider } from './tickListDataProvider'
+import { BigintIsh, CurrencyAmount, Price } from "@uniswap/sdk-core";
+import JSBI from "jsbi";
+import invariant from "tiny-invariant";
+import { FeeAmount, TICK_SPACINGS } from "../constants";
+import { NEGATIVE_ONE, Q128 } from "../internalConstants";
+import { TickMath } from "../utils/tickMath";
+import { v3Swap } from "../utils/v3swap";
+import { Tick, TickConstructorArgs } from "./tick";
+import { NoTickDataProvider, TickDataProvider } from "./tickDataProvider";
+import { TickListDataProvider } from "./tickListDataProvider";
+import { Token } from "./token";
 
 /**
  * By default, pools will not allow operations that require ticks.
  */
-const NO_TICK_DATA_PROVIDER_DEFAULT = new NoTickDataProvider()
+const NO_TICK_DATA_PROVIDER_DEFAULT = new NoTickDataProvider();
 
 /**
  * Represents a V3 pool
  */
 export class Pool {
-  public readonly token0: Token
-  public readonly token1: Token
-  public readonly fee: FeeAmount
-  public readonly sqrtRatioX96: JSBI
-  public readonly liquidity: JSBI
-  public readonly tickCurrent: number
-  public readonly tickDataProvider: TickDataProvider
+  public readonly token0: Token;
+  public readonly token1: Token;
+  public readonly fee: FeeAmount;
+  public readonly sqrtRatioX96: JSBI;
+  public readonly liquidity: JSBI;
+  public readonly tickCurrent: number;
+  public readonly tickDataProvider: TickDataProvider;
 
-  private _token0Price?: Price<Token, Token>
-  private _token1Price?: Price<Token, Token>
+  private _token0Price?: Price<Token, Token>;
+  private _token1Price?: Price<Token, Token>;
 
   // public static getAddress(
   //   tokenA: Token,
@@ -63,24 +63,33 @@ export class Pool {
     sqrtRatioX96: BigintIsh,
     liquidity: BigintIsh,
     tickCurrent: number,
-    ticks: TickDataProvider | (Tick | TickConstructorArgs)[] = NO_TICK_DATA_PROVIDER_DEFAULT
+    ticks:
+      | TickDataProvider
+      | (Tick | TickConstructorArgs)[] = NO_TICK_DATA_PROVIDER_DEFAULT
   ) {
-    invariant(Number.isInteger(fee) && fee < 1_000_000, 'FEE')
+    invariant(Number.isInteger(fee) && fee < 1_000_000, "FEE");
 
-    const tickCurrentSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent)
-    const nextTickSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent + 1)
+    const tickCurrentSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent);
+    const nextTickSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent + 1);
     invariant(
-      JSBI.greaterThanOrEqual(JSBI.BigInt(sqrtRatioX96), tickCurrentSqrtRatioX96) &&
+      JSBI.greaterThanOrEqual(
+        JSBI.BigInt(sqrtRatioX96),
+        tickCurrentSqrtRatioX96
+      ) &&
         JSBI.lessThanOrEqual(JSBI.BigInt(sqrtRatioX96), nextTickSqrtRatioX96),
-      'PRICE_BOUNDS'
-    )
+      "PRICE_BOUNDS"
+    );
     // always create a copy of the list since we want the pool's tick list to be immutable
-    ;[this.token0, this.token1] = tokenA.sortsBefore(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA]
-    this.fee = fee
-    this.sqrtRatioX96 = JSBI.BigInt(sqrtRatioX96)
-    this.liquidity = JSBI.BigInt(liquidity)
-    this.tickCurrent = tickCurrent
-    this.tickDataProvider = Array.isArray(ticks) ? new TickListDataProvider(ticks, TICK_SPACINGS[fee]) : ticks
+    [this.token0, this.token1] = tokenA.sortsBefore(tokenB)
+      ? [tokenA, tokenB]
+      : [tokenB, tokenA];
+    this.fee = fee;
+    this.sqrtRatioX96 = JSBI.BigInt(sqrtRatioX96);
+    this.liquidity = JSBI.BigInt(liquidity);
+    this.tickCurrent = tickCurrent;
+    this.tickDataProvider = Array.isArray(ticks)
+      ? new TickListDataProvider(ticks, TICK_SPACINGS[fee])
+      : ticks;
   }
 
   /**
@@ -89,7 +98,7 @@ export class Pool {
    * @returns True if token is either token0 or token
    */
   public involvesToken(token: Token): boolean {
-    return token.equals(this.token0) || token.equals(this.token1)
+    return token.equals(this.token0) || token.equals(this.token1);
   }
 
   /**
@@ -104,7 +113,7 @@ export class Pool {
         Q128,
         JSBI.multiply(this.sqrtRatioX96, this.sqrtRatioX96)
       ))
-    )
+    );
   }
 
   /**
@@ -119,7 +128,7 @@ export class Pool {
         JSBI.multiply(this.sqrtRatioX96, this.sqrtRatioX96),
         Q128
       ))
-    )
+    );
   }
 
   /**
@@ -128,15 +137,15 @@ export class Pool {
    * @returns The price of the given token, in terms of the other.
    */
   public priceOf(token: Token): Price<Token, Token> {
-    invariant(this.involvesToken(token), 'TOKEN')
-    return token.equals(this.token0) ? this.token0Price : this.token1Price
+    invariant(this.involvesToken(token), "TOKEN");
+    return token.equals(this.token0) ? this.token0Price : this.token1Price;
   }
 
   /**
    * Returns the chain ID of the tokens in the pool.
    */
   public get chainId(): number {
-    return this.token0.chainId
+    return this.token0.chainId;
   }
 
   /**
@@ -149,21 +158,32 @@ export class Pool {
     inputAmount: CurrencyAmount<Token>,
     sqrtPriceLimitX96?: JSBI
   ): Promise<[CurrencyAmount<Token>, Pool]> {
-    invariant(this.involvesToken(inputAmount.currency), 'TOKEN')
+    invariant(this.involvesToken(inputAmount.currency), "TOKEN");
 
-    const zeroForOne = inputAmount.currency.equals(this.token0)
+    const zeroForOne = inputAmount.currency.equals(this.token0);
 
     const {
       amountCalculated: outputAmount,
       sqrtRatioX96,
       liquidity,
       tickCurrent,
-    } = await this.swap(zeroForOne, inputAmount.quotient, sqrtPriceLimitX96)
-    const outputToken = zeroForOne ? this.token1 : this.token0
+    } = await this.swap(zeroForOne, inputAmount.quotient, sqrtPriceLimitX96);
+    const outputToken = zeroForOne ? this.token1 : this.token0;
     return [
-      CurrencyAmount.fromRawAmount(outputToken, JSBI.multiply(outputAmount, NEGATIVE_ONE)),
-      new Pool(this.token0, this.token1, this.fee, sqrtRatioX96, liquidity, tickCurrent, this.tickDataProvider),
-    ]
+      CurrencyAmount.fromRawAmount(
+        outputToken,
+        JSBI.multiply(outputAmount, NEGATIVE_ONE)
+      ),
+      new Pool(
+        this.token0,
+        this.token1,
+        this.fee,
+        sqrtRatioX96,
+        liquidity,
+        tickCurrent,
+        this.tickDataProvider
+      ),
+    ];
   }
 
   /**
@@ -176,21 +196,37 @@ export class Pool {
     outputAmount: CurrencyAmount<Token>,
     sqrtPriceLimitX96?: JSBI
   ): Promise<[CurrencyAmount<Token>, Pool]> {
-    invariant(outputAmount.currency.isToken && this.involvesToken(outputAmount.currency), 'TOKEN')
+    invariant(
+      outputAmount.currency.isToken &&
+        this.involvesToken(outputAmount.currency),
+      "TOKEN"
+    );
 
-    const zeroForOne = outputAmount.currency.equals(this.token1)
+    const zeroForOne = outputAmount.currency.equals(this.token1);
 
     const {
       amountCalculated: inputAmount,
       sqrtRatioX96,
       liquidity,
       tickCurrent,
-    } = await this.swap(zeroForOne, JSBI.multiply(outputAmount.quotient, NEGATIVE_ONE), sqrtPriceLimitX96)
-    const inputToken = zeroForOne ? this.token0 : this.token1
+    } = await this.swap(
+      zeroForOne,
+      JSBI.multiply(outputAmount.quotient, NEGATIVE_ONE),
+      sqrtPriceLimitX96
+    );
+    const inputToken = zeroForOne ? this.token0 : this.token1;
     return [
       CurrencyAmount.fromRawAmount(inputToken, inputAmount),
-      new Pool(this.token0, this.token1, this.fee, sqrtRatioX96, liquidity, tickCurrent, this.tickDataProvider),
-    ]
+      new Pool(
+        this.token0,
+        this.token1,
+        this.fee,
+        sqrtRatioX96,
+        liquidity,
+        tickCurrent,
+        this.tickDataProvider
+      ),
+    ];
   }
 
   /**
@@ -207,7 +243,12 @@ export class Pool {
     zeroForOne: boolean,
     amountSpecified: JSBI,
     sqrtPriceLimitX96?: JSBI
-  ): Promise<{ amountCalculated: JSBI; sqrtRatioX96: JSBI; liquidity: JSBI; tickCurrent: number }> {
+  ): Promise<{
+    amountCalculated: JSBI;
+    sqrtRatioX96: JSBI;
+    liquidity: JSBI;
+    tickCurrent: number;
+  }> {
     return v3Swap(
       JSBI.BigInt(this.fee),
       this.sqrtRatioX96,
@@ -218,10 +259,10 @@ export class Pool {
       zeroForOne,
       amountSpecified,
       sqrtPriceLimitX96
-    )
+    );
   }
 
   public get tickSpacing(): number {
-    return TICK_SPACINGS[this.fee]
+    return TICK_SPACINGS[this.fee];
   }
 }

@@ -28,11 +28,13 @@ function fetchGraphQL(
   }).then((result) => result.json());
 }
 
-export function fetchMyQuery(offset, pool_id) {
+export function fetchPoolTickInfo(offset, pool_id) {
   let operation = `
     query MyQuery {
       api {
         getPoolTickInfo(offset: ${offset}, poolId: "${pool_id}") {
+          poolId
+          feeRate
           activeLPAmount
           currentTick
           sqrtPrice
@@ -47,14 +49,3 @@ export function fetchMyQuery(offset, pool_id) {
   `;
   return fetchGraphQL(operation, "MyQuery", {});
 }
-
-// fetchMyQuery(100, "0xd3894aca06d5f42b27c89e6f448114b3ed6a1ba07f992a58b2126c71dd83c127")
-//   .then(({ data, errors }) => {
-//     if (errors) {
-//       console.error(errors);
-//     }
-//     console.log(data);
-//   })
-//   .catch(error => {
-//     console.error(error);
-//   });

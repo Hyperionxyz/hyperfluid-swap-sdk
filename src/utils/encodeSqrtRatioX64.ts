@@ -1,5 +1,5 @@
-import JSBI from 'jsbi'
-import { BigintIsh, sqrt } from '@uniswap/sdk-core'
+import { BigintIsh, sqrt } from "@uniswap/sdk-core";
+import JSBI from "jsbi";
 
 /**
  * Returns the sqrt ratio as a Q64.64 corresponding to a given ratio of amount1 and amount0
@@ -8,9 +8,12 @@ import { BigintIsh, sqrt } from '@uniswap/sdk-core'
  * @returns The sqrt ratio
  */
 
-export function encodeSqrtRatioX64(amount1: BigintIsh, amount0: BigintIsh): JSBI {
-  const numerator = JSBI.leftShift(JSBI.BigInt(amount1), JSBI.BigInt(128))
-  const denominator = JSBI.BigInt(amount0)
-  const ratioX128 = JSBI.divide(numerator, denominator)
-  return sqrt(ratioX128)
+export function encodeSqrtRatioX64(
+  amount1: BigintIsh,
+  amount0: BigintIsh
+): JSBI {
+  const numerator = JSBI.leftShift(JSBI.BigInt(amount1), JSBI.BigInt(128));
+  const denominator = JSBI.BigInt(amount0);
+  const ratioX128 = JSBI.divide(numerator, denominator);
+  return sqrt(ratioX128);
 }

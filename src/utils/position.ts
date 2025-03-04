@@ -1,7 +1,7 @@
-import JSBI from 'jsbi'
-import { subIn256 } from '.'
+import JSBI from "jsbi";
+import { subIn256 } from ".";
 
-const Q128 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128))
+const Q128 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128));
 
 export abstract class PositionLibrary {
   /**
@@ -18,15 +18,21 @@ export abstract class PositionLibrary {
     feeGrowthInside1X128: JSBI
   ) {
     const tokensOwed0 = JSBI.divide(
-      JSBI.multiply(subIn256(feeGrowthInside0X128, feeGrowthInside0LastX128), liquidity),
+      JSBI.multiply(
+        subIn256(feeGrowthInside0X128, feeGrowthInside0LastX128),
+        liquidity
+      ),
       Q128
-    )
+    );
 
     const tokensOwed1 = JSBI.divide(
-      JSBI.multiply(subIn256(feeGrowthInside1X128, feeGrowthInside1LastX128), liquidity),
+      JSBI.multiply(
+        subIn256(feeGrowthInside1X128, feeGrowthInside1LastX128),
+        liquidity
+      ),
       Q128
-    )
+    );
 
-    return [tokensOwed0, tokensOwed1]
+    return [tokensOwed0, tokensOwed1];
   }
 }
