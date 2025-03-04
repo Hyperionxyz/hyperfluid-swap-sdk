@@ -4,27 +4,29 @@ to your service.
 
 Note: we only handle the first operation here
 */
-import fetch from 'node-fetch';
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import fetch from "node-fetch";
 
-dotenv.config()
+dotenv.config();
 
 function fetchGraphQL(
   operationsDoc: string,
   operationName: string,
   variables: Record<string, any>
 ) {
-  return fetch(process.env.HYPERFLUID_API, {
-    method: 'POST',
+  const apiUrl = process.env.HYPERFLUID_API;
+  if (!apiUrl) {
+    throw new Error("HYPERFLUID_API environment variable is not defined");
+  }
+  return fetch(apiUrl, {
+    method: "POST",
     body: JSON.stringify({
       query: operationsDoc,
       variables,
       operationName,
-    },
-  ),
-  }).then(result => result.json());
+    }),
+  }).then((result) => result.json());
 }
-
 
 export function fetchMyQuery(offset, pool_id) {
   let operation = `
@@ -43,7 +45,7 @@ export function fetchMyQuery(offset, pool_id) {
       }
     }
   `;
-  return fetchGraphQL(operation, 'MyQuery', {})
+  return fetchGraphQL(operation, "MyQuery", {});
 }
 
 // fetchMyQuery(100, "0xd3894aca06d5f42b27c89e6f448114b3ed6a1ba07f992a58b2126c71dd83c127")
