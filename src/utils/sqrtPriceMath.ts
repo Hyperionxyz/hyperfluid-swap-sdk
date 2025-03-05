@@ -120,7 +120,7 @@ export abstract class SqrtPriceMath {
         );
   }
 
-  public static getSqrtPrice(sqrtPrice: number): JSBI {
+  public static getSqrtPrice(sqrtPrice: string): JSBI {
     return JSBI.leftShift(JSBI.BigInt(sqrtPrice), JSBI.BigInt(32));
   }
 
