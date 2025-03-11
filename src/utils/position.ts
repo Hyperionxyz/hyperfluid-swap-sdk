@@ -1,7 +1,7 @@
 import JSBI from "jsbi";
 import { subIn256 } from ".";
-import { TickMath } from './tickMath'
-import { SqrtPriceMath } from './sqrtPriceMath'
+import { TickMath } from "./tickMath";
+import { SqrtPriceMath } from "./sqrtPriceMath";
 import { Tick } from "src/entities";
 
 const Q128 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128));
@@ -44,24 +44,85 @@ export abstract class PositionLibrary {
     tickLower: number,
     tickUpper: number,
     amountADesired: number,
-    amountBDesired: number,
+    amountBDesired: number
   ): JSBI {
     let lowerPrice = TickMath.getSqrtRatioAtTick(tickLower);
     let upperPrice = TickMath.getSqrtRatioAtTick(tickUpper);
     let res = JSBI.BigInt(0);
-    if(JSBI.lessThanOrEqual(sqrtPriceCurrent, lowerPrice)) {
-      res = SqrtPriceMath.getLiquidityFromA(lowerPrice, upperPrice, JSBI.BigInt(amountADesired), true)
+    if (JSBI.lessThanOrEqual(sqrtPriceCurrent, lowerPrice)) {
+      res = SqrtPriceMath.getLiquidityFromA(
+        lowerPrice,
+        upperPrice,
+        JSBI.BigInt(amountADesired),
+        true
+      );
     } else if (JSBI.LT(sqrtPriceCurrent, upperPrice)) {
-      let liquidityA = SqrtPriceMath.getLiquidityFromA(sqrtPriceCurrent, upperPrice, JSBI.BigInt(amountADesired), true);
-      let liquidityB = SqrtPriceMath.getLiquidityFromB(lowerPrice, sqrtPriceCurrent, JSBI.BigInt(amountBDesired), true);
-      if(liquidityA <= liquidityB) {
-          res = liquidityA
+      let liquidityA = SqrtPriceMath.getLiquidityFromA(
+        sqrtPriceCurrent,
+        upperPrice,
+        JSBI.BigInt(amountADesired),
+        true
+      );
+      let liquidityB = SqrtPriceMath.getLiquidityFromB(
+        lowerPrice,
+        sqrtPriceCurrent,
+        JSBI.BigInt(amountBDesired),
+        true
+      );
+      if (liquidityA <= liquidityB) {
+        res = liquidityA;
       } else {
-          res = liquidityB
-      };
+        res = liquidityB;
+      }
     } else {
-      res = SqrtPriceMath.getLiquidityFromB(lowerPrice, upperPrice, JSBI.BigInt(amountBDesired), true);
+      res = SqrtPriceMath.getLiquidityFromB(
+        lowerPrice,
+        upperPrice,
+        JSBI.BigInt(amountBDesired),
+        true
+      );
     }
-    return res
+    return res;
+  }
+
+  public static getAmountAAndB(
+    sqrtPriceCurrent: JSBI,
+    tickLower: number,
+    tickUpper: number,
+    liquidity: JSBI
+  ): Readonly<{ amountA: JSBI; amountB: JSBI }> {
+    let lowerPrice = TickMath.getSqrtRatioAtTick(tickLower);
+    let upperPrice = TickMath.getSqrtRatioAtTick(tickUpper);
+    let amountA = JSBI.BigInt(0);
+    let amountB = JSBI.BigInt(0);
+    if (JSBI.lessThanOrEqual(sqrtPriceCurrent, lowerPrice)) {
+      amountA = SqrtPriceMath.getAmount0Delta(
+        lowerPrice,
+        upperPrice,
+        liquidity,
+        false
+      );
+    } else if (JSBI.LT(sqrtPriceCurrent, upperPrice)) {
+      amountA = SqrtPriceMath.getAmount0Delta(
+        sqrtPriceCurrent,
+        upperPrice,
+        liquidity,
+        false
+      );
+      amountB = SqrtPriceMath.getAmount1Delta(
+        lowerPrice,
+        sqrtPriceCurrent,
+        liquidity,
+        false
+      );
+    } else {
+      amountB = SqrtPriceMath.getAmount1Delta(
+        lowerPrice,
+        upperPrice,
+        liquidity,
+        false
+      );
+    }
+    return { amountA, amountB };
   }
 }
