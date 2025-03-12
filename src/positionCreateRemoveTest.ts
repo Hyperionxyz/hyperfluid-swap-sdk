@@ -2,6 +2,8 @@ import { PositionLibrary } from "./utils/position";
 import { TickMath } from "./utils";
 import { SqrtPriceMath } from "./utils";
 import JSBI from "jsbi";
+import { sqrt } from "@uniswap/sdk-core";
+import { encodeSqrtRatioX96 } from "./utils";
 
 export function createThenRemoveFromB(
   sqrtPriceCurrent: JSBI,
@@ -113,8 +115,13 @@ export function createThenRemoveFromA(
   };
 }
 
-let sqrtPriceCurrent = SqrtPriceMath.getSqrtPrice("51641728865761437241");
+let sqrtPriceFromTick = TickMath.getSqrtRatioAtTick(20000);
 
+export function priceToSqrtPrice(price: number): JSBI {
+  return encodeSqrtRatioX96(price * 1000000000, 100000000);
+}
+
+let sqrtPriceCurrent = SqrtPriceMath.getSqrtPrice("51641728865761437241");
 let res = createThenRemoveFromA(sqrtPriceCurrent, 19535, 21542, 100000000);
 
 console.log(res.amountAInput.toString());
