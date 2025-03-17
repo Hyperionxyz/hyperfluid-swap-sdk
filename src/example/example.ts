@@ -1,9 +1,9 @@
 import { CurrencyAmount, TradeType } from "@uniswap/sdk-core";
-import { Route, Trade } from "./entities";
-import { Pool } from "./entities/pool";
-import { Token } from "./entities/token";
+import { Route, Trade } from "../entities";
+import { Pool } from "../entities/pool";
+import { Token } from "../entities/token";
 import { fetchPoolTickInfo } from "./fetchTickInfo";
-import { SqrtPriceMath } from "./utils";
+import { SqrtPriceMath } from "../utils";
 import { getAmountOut } from "./viewGetAmount";
 
 async function main() {

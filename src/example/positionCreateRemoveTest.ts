@@ -1,9 +1,9 @@
-import { PositionLibrary } from "./utils/position";
-import { TickMath } from "./utils";
-import { SqrtPriceMath } from "./utils";
+import { PositionLibrary } from "../utils/position";
+import { TickMath } from "../utils";
+import { SqrtPriceMath } from "../utils";
 import JSBI from "jsbi";
 import { sqrt } from "@uniswap/sdk-core";
-import { encodeSqrtRatioX96 } from "./utils";
+import { encodeSqrtRatioX96 } from "../utils";
 
 export function createThenRemoveFromB(
   sqrtPriceCurrent: JSBI,
