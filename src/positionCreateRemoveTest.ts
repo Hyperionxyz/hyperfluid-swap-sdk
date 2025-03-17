@@ -17,6 +17,8 @@ export function createThenRemoveFromB(
   amountBLeft: JSBI;
   amountARight: JSBI;
   amountBRight: JSBI;
+  leftBoundaryImpermanentLossRatio: number;
+  rightBoundaryImpermanentLossRatio: number;
 }> {
   // in range
   let lowerPrice = TickMath.getSqrtRatioAtTick(tickLower);
@@ -50,6 +52,64 @@ export function createThenRemoveFromB(
       tickUpper,
       liquidityB
     );
+  let originValueAtLeftBoundary = JSBI.ADD(
+    JSBI.signedRightShift(
+      JSBI.multiply(
+        JSBI.BigInt(amountAInput),
+        JSBI.exponentiate(upperPrice, JSBI.BigInt(2))
+      ),
+      JSBI.BigInt(192)
+    ),
+    amountBInput
+  );
+  let originValueAtRightBoundary = JSBI.ADD(
+    JSBI.signedRightShift(
+      JSBI.multiply(
+        JSBI.BigInt(amountAInput),
+        JSBI.exponentiate(lowerPrice, JSBI.BigInt(2))
+      ),
+      JSBI.BigInt(192)
+    ),
+    amountBInput
+  );
+  let leftBoundaryValue = JSBI.ADD(
+    JSBI.multiply(
+      JSBI.BigInt(amountALeft),
+      JSBI.signedRightShift(
+        JSBI.exponentiate(upperPrice, JSBI.BigInt(2)),
+        JSBI.BigInt(192)
+      )
+    ),
+    amountBLeft
+  );
+  let rightBoundaryValue = JSBI.ADD(
+    JSBI.multiply(
+      JSBI.BigInt(amountARight),
+      JSBI.signedRightShift(
+        JSBI.exponentiate(lowerPrice, JSBI.BigInt(2)),
+        JSBI.BigInt(192)
+      )
+    ),
+    amountBRight
+  );
+  console.log(originValueAtLeftBoundary.toString());
+  console.log(leftBoundaryValue.toString());
+  console.log(originValueAtRightBoundary.toString());
+  console.log(rightBoundaryValue.toString());
+  let leftDiffRatio = JSBI.divide(
+    JSBI.leftShift(
+      JSBI.subtract(originValueAtLeftBoundary, leftBoundaryValue),
+      JSBI.BigInt(64)
+    ),
+    originValueAtLeftBoundary
+  );
+  let rightDiffRatio = JSBI.divide(
+    JSBI.leftShift(
+      JSBI.subtract(originValueAtRightBoundary, rightBoundaryValue),
+      JSBI.BigInt(64)
+    ),
+    originValueAtRightBoundary
+  );
   return {
     amountAInput: amountAInput,
     amountBInput: JSBI.BigInt(amountBInput),
@@ -57,6 +117,8 @@ export function createThenRemoveFromB(
     amountBLeft,
     amountARight,
     amountBRight,
+    leftBoundaryImpermanentLossRatio: jsbiToRatio(leftDiffRatio, 64),
+    rightBoundaryImpermanentLossRatio: jsbiToRatio(rightDiffRatio, 64),
   };
 }
 
@@ -72,6 +134,8 @@ export function createThenRemoveFromA(
   amountBLeft: JSBI;
   amountARight: JSBI;
   amountBRight: JSBI;
+  leftBoundaryImpermanentLossRatio: number;
+  rightBoundaryImpermanentLossRatio: number;
 }> {
   // in range
   let lowerPrice = TickMath.getSqrtRatioAtTick(tickLower);
@@ -82,7 +146,7 @@ export function createThenRemoveFromA(
     JSBI.BigInt(amountAInput),
     true
   );
-  console.log(liquidityA.toString());
+  // console.log(liquidityA.toString());
   let amountBInput = SqrtPriceMath.getAmount1Delta(
     lowerPrice,
     sqrtPriceCurrent,
@@ -105,6 +169,60 @@ export function createThenRemoveFromA(
       tickUpper,
       liquidityA
     );
+  let originValueAtLeftBoundary = JSBI.ADD(
+    JSBI.signedRightShift(
+      JSBI.multiply(
+        JSBI.BigInt(amountAInput),
+        JSBI.exponentiate(upperPrice, JSBI.BigInt(2))
+      ),
+      JSBI.BigInt(192)
+    ),
+    amountBInput
+  );
+  let originValueAtRightBoundary = JSBI.ADD(
+    JSBI.signedRightShift(
+      JSBI.multiply(
+        JSBI.BigInt(amountAInput),
+        JSBI.exponentiate(lowerPrice, JSBI.BigInt(2))
+      ),
+      JSBI.BigInt(192)
+    ),
+    amountBInput
+  );
+  let leftBoundaryValue = JSBI.ADD(
+    JSBI.multiply(
+      JSBI.BigInt(amountALeft),
+      JSBI.signedRightShift(
+        JSBI.exponentiate(upperPrice, JSBI.BigInt(2)),
+        JSBI.BigInt(192)
+      )
+    ),
+    amountBLeft
+  );
+  let rightBoundaryValue = JSBI.ADD(
+    JSBI.multiply(
+      JSBI.BigInt(amountARight),
+      JSBI.signedRightShift(
+        JSBI.exponentiate(lowerPrice, JSBI.BigInt(2)),
+        JSBI.BigInt(192)
+      )
+    ),
+    amountBRight
+  );
+  let leftDiffRatio = JSBI.divide(
+    JSBI.leftShift(
+      JSBI.subtract(originValueAtLeftBoundary, leftBoundaryValue),
+      JSBI.BigInt(64)
+    ),
+    originValueAtLeftBoundary
+  );
+  let rightDiffRatio = JSBI.divide(
+    JSBI.leftShift(
+      JSBI.subtract(originValueAtRightBoundary, rightBoundaryValue),
+      JSBI.BigInt(64)
+    ),
+    originValueAtRightBoundary
+  );
   return {
     amountAInput: JSBI.BigInt(amountAInput),
     amountBInput,
@@ -112,13 +230,24 @@ export function createThenRemoveFromA(
     amountBLeft,
     amountARight,
     amountBRight,
+    leftBoundaryImpermanentLossRatio: jsbiToRatio(leftDiffRatio, 64),
+    rightBoundaryImpermanentLossRatio: jsbiToRatio(rightDiffRatio, 64),
   };
+}
+
+function jsbiToRatio(fixedPoint: JSBI, denominator: number): number {
+  return (
+    parseFloat(fixedPoint.toString()) /
+    parseFloat(
+      JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(denominator)).toString()
+    )
+  );
 }
 
 let sqrtPriceFromTick = TickMath.getSqrtRatioAtTick(20000);
 
 export function priceToSqrtPrice(price: number): JSBI {
-  return encodeSqrtRatioX96(price * 1000000000, 100000000);
+  return encodeSqrtRatioX96(price * 1000000000, 1000000000);
 }
 
 let sqrtPriceCurrent = SqrtPriceMath.getSqrtPrice("51641728865761437241");
@@ -130,3 +259,5 @@ console.log(res.amountALeft.toString());
 console.log(res.amountBLeft.toString());
 console.log(res.amountARight.toString());
 console.log(res.amountBRight.toString());
+console.log(res.leftBoundaryImpermanentLossRatio);
+console.log(res.rightBoundaryImpermanentLossRatio);
