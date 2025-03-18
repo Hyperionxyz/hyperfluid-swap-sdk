@@ -190,22 +190,22 @@ export function createThenRemoveFromA(
     amountBInput
   );
   let leftBoundaryValue = JSBI.ADD(
-    JSBI.multiply(
-      JSBI.BigInt(amountALeft),
-      JSBI.signedRightShift(
-        JSBI.exponentiate(upperPrice, JSBI.BigInt(2)),
-        JSBI.BigInt(192)
-      )
+    JSBI.signedRightShift(
+      JSBI.multiply(
+        JSBI.BigInt(amountALeft),
+        JSBI.exponentiate(upperPrice, JSBI.BigInt(2))
+      ),
+      JSBI.BigInt(192)
     ),
     amountBLeft
   );
   let rightBoundaryValue = JSBI.ADD(
-    JSBI.multiply(
-      JSBI.BigInt(amountARight),
-      JSBI.signedRightShift(
-        JSBI.exponentiate(lowerPrice, JSBI.BigInt(2)),
-        JSBI.BigInt(192)
-      )
+    JSBI.signedRightShift(
+      JSBI.multiply(
+        JSBI.BigInt(amountARight),
+        JSBI.exponentiate(lowerPrice, JSBI.BigInt(2))
+      ),
+      JSBI.BigInt(192)
     ),
     amountBRight
   );
@@ -247,17 +247,45 @@ function jsbiToRatio(fixedPoint: JSBI, denominator: number): number {
 let sqrtPriceFromTick = TickMath.getSqrtRatioAtTick(20000);
 
 export function priceToSqrtPrice(price: number): JSBI {
-  return encodeSqrtRatioX96(price * 1000000000, 1000000000);
+  return encodeSqrtRatioX96(Math.ceil(price * 1000000000), 1000000000);
 }
 
-let sqrtPriceCurrent = SqrtPriceMath.getSqrtPrice("51641728865761437241");
-let res = createThenRemoveFromA(sqrtPriceCurrent, 19535, 21542, 100000000);
+// let sqrtPriceCurrent = SqrtPriceMath.getSqrtPrice("51641728865761437241");
+// let res = createThenRemoveFromA(sqrtPriceCurrent, 19535, 21542, 100000000);
 
-console.log(res.amountAInput.toString());
-console.log(res.amountBInput.toString());
-console.log(res.amountALeft.toString());
-console.log(res.amountBLeft.toString());
-console.log(res.amountARight.toString());
-console.log(res.amountBRight.toString());
-console.log(res.leftBoundaryImpermanentLossRatio);
-console.log(res.rightBoundaryImpermanentLossRatio);
+// console.log(res.amountAInput.toString());
+// console.log(res.amountBInput.toString());
+// console.log(res.amountALeft.toString());
+// console.log(res.amountBLeft.toString());
+// console.log(res.amountARight.toString());
+// console.log(res.amountBRight.toString());
+// console.log(res.leftBoundaryImpermanentLossRatio);
+// console.log(res.rightBoundaryImpermanentLossRatio);
+
+const offset = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1];
+//const offset = [0.02];
+for (const o of offset) {
+  const low = 6 / (1 + o);
+  const high = 6 * (1 + o);
+  console.log();
+  console.log(low, high);
+  const lowTick = TickMath.getTickAtSqrtRatio(priceToSqrtPrice(low / 100));
+  const highTick = TickMath.getTickAtSqrtRatio(priceToSqrtPrice(high / 100));
+  console.log(lowTick);
+  console.log(highTick);
+  let sqrtPriceFromTick = TickMath.getSqrtRatioAtTick(-28135);
+  let res = createThenRemoveFromA(
+    sqrtPriceFromTick,
+    lowTick,
+    highTick,
+    100000000
+  );
+  console.log(res.amountAInput.toString());
+  console.log(res.amountBInput.toString());
+  console.log(res.amountALeft.toString());
+  console.log(res.amountBLeft.toString());
+  console.log(res.amountARight.toString());
+  console.log(res.amountBRight.toString());
+  console.log(res.leftBoundaryImpermanentLossRatio);
+  console.log(res.rightBoundaryImpermanentLossRatio);
+}
