@@ -1,6 +1,7 @@
 import invariant from "tiny-invariant";
 import { Tick } from "../entities/tick";
 import { isSorted } from "./isSorted";
+import JSBI from "jsbi";
 
 function tickComparator(a: Tick, b: Tick) {
   return a.index - b.index;
@@ -52,6 +53,26 @@ export abstract class TickList {
     const tick = ticks[this.binarySearch(ticks, index)];
     invariant(tick.index === index, "NOT_CONTAINED");
     return tick;
+  }
+
+  public static setTick(
+    ticks: Tick[],
+    index: number,
+    liquidityNet: JSBI,
+    liquidityGross: JSBI
+  ): Tick[] {
+    const _index = this.binarySearch(ticks, index);
+    const tick = ticks[_index];
+    if (tick.index === index) {
+      tick.liquidityGross = liquidityGross;
+      tick.liquidityNet = liquidityNet;
+      return ticks;
+    } else {
+      let new_ticks = ticks.slice(0, _index + 1);
+      new_ticks.push(new Tick({ index, liquidityGross, liquidityNet }));
+      new_ticks.concat(ticks.slice(_index + 1, ticks.length));
+      return new_ticks;
+    }
   }
 
   /**

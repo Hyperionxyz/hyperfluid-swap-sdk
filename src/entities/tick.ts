@@ -11,8 +11,8 @@ export interface TickConstructorArgs {
 
 export class Tick {
   public readonly index: number;
-  public readonly liquidityGross: JSBI;
-  public readonly liquidityNet: JSBI;
+  public liquidityGross: JSBI;
+  public liquidityNet: JSBI;
 
   constructor({ index, liquidityGross, liquidityNet }: TickConstructorArgs) {
     invariant(index >= TickMath.MIN_TICK && index <= TickMath.MAX_TICK, "TICK");
