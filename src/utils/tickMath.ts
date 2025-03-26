@@ -22,7 +22,7 @@ export abstract class TickMath {
   /**
    * The minimum tick that can be used on any pool.
    */
-  public static MIN_TICK: number = -887272;
+  public static MIN_TICK: number = -443636;
   /**
    * The maximum tick that can be used on any pool.
    */
@@ -31,12 +31,12 @@ export abstract class TickMath {
   /**
    * The sqrt ratio corresponding to the minimum tick that could be used on any pool.
    */
-  public static MIN_SQRT_RATIO: JSBI = JSBI.BigInt("4295128739");
+  public static MIN_SQRT_RATIO: JSBI = JSBI.BigInt("18447090764788882728");
   /**
    * The sqrt ratio corresponding to the maximum tick that could be used on any pool.
    */
   public static MAX_SQRT_RATIO: JSBI = JSBI.BigInt(
-    "1461446703485210103287273052203988822378723970342"
+    "340275971719517849884101479065584693834"
   );
 
   /**
