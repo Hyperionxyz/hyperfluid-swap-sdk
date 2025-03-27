@@ -5,18 +5,28 @@ import { Token } from "./entities/token";
 import { fetchPoolTickInfo } from "./fetchTickInfo";
 import { SqrtPriceMath } from "./utils";
 import { getAmountOut } from "./viewGetAmount";
+import { AccountAddress } from "@aptos-labs/ts-sdk";
+
+function getLongAddress(address: string) {
+  return AccountAddress.fromString(address).toStringLong();
+}
 
 async function main() {
+  // make sure you have transform short address to long format
   const token0 = new Token(
     1,
-    "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b",
+    getLongAddress(
+      "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b"
+    ),
     6,
     "usdt",
     "token0"
   );
   const token1 = new Token(
     1,
-    "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b",
+    getLongAddress(
+      "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b"
+    ),
     6,
     "usdc",
     "token1"
