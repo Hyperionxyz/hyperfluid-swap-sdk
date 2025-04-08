@@ -69,7 +69,7 @@ export abstract class PositionLibrary {
         JSBI.BigInt(amountBDesired),
         true
       );
-      if (liquidityA <= liquidityB) {
+      if (JSBI.LT(liquidityA, liquidityB)) {
         res = liquidityA;
       } else {
         res = liquidityB;
