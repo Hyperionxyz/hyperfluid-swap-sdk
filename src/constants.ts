@@ -26,6 +26,7 @@ export enum FeeAmount {
   MEDIUM = 3000,
   HIGH = 10000,
   EXTRA = 1000,
+  UU = 2500,
 }
 
 /**
@@ -37,4 +38,5 @@ export const TICK_SPACINGS: { [amount in FeeAmount]: number } = {
   [FeeAmount.MEDIUM]: 60,
   [FeeAmount.HIGH]: 200,
   [FeeAmount.EXTRA]: 20,
+  [FeeAmount.UU]: 50,
 };

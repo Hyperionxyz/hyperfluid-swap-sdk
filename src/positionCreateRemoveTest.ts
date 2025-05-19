@@ -122,11 +122,16 @@ export function priceToSqrtPrice(price: number): JSBI {
 }
 
 let sqrtPriceCurrent = SqrtPriceMath.getSqrtPrice("51641728865761437241");
-let res = createThenRemoveFromA(sqrtPriceCurrent, 19535, 21542, 100000000);
+let res = createThenRemoveFromA(
+  sqrtPriceCurrent,
+  19535,
+  21542,
+  1000000000000000000
+);
 
-console.log(res.amountAInput.toString());
-console.log(res.amountBInput.toString());
-console.log(res.amountALeft.toString());
-console.log(res.amountBLeft.toString());
-console.log(res.amountARight.toString());
-console.log(res.amountBRight.toString());
+// console.log(res.amountAInput.toString());
+// console.log(res.amountBInput.toString());
+// console.log(res.amountALeft.toString());
+// console.log(res.amountBLeft.toString());
+// console.log(res.amountARight.toString());
+// console.log(res.amountBRight.toString());

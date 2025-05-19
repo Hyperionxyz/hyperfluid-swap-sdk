@@ -124,7 +124,7 @@ export abstract class SqrtPriceMath {
     return JSBI.leftShift(JSBI.BigInt(sqrtPrice), JSBI.BigInt(32));
   }
 
-  public static getLiquidityFromA( 
+  public static getLiquidityFromA(
     sqrtRatioAX96: JSBI,
     sqrtRatioBX96: JSBI,
     amountA: JSBI,
@@ -133,11 +133,15 @@ export abstract class SqrtPriceMath {
     if (JSBI.greaterThan(sqrtRatioAX96, sqrtRatioBX96)) {
       [sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96];
     }
-    let sqrtPriceDiff = JSBI.leftShift(JSBI.subtract(sqrtRatioBX96, sqrtRatioAX96), JSBI.BigInt(96));
+    let sqrtPriceDiff = JSBI.leftShift(
+      JSBI.subtract(sqrtRatioBX96, sqrtRatioAX96),
+      JSBI.BigInt(96)
+    );
     let numerator = JSBI.multiply(sqrtRatioAX96, sqrtRatioBX96);
 
-    let divRes = roundUp ? FullMath.mulDivRoundingUp(numerator, amountA, sqrtPriceDiff) :
-    JSBI.divide(JSBI.multiply(numerator, amountA), sqrtPriceDiff);
+    let divRes = roundUp
+      ? FullMath.mulDivRoundingUp(numerator, amountA, sqrtPriceDiff)
+      : JSBI.divide(JSBI.multiply(numerator, amountA), sqrtPriceDiff);
     return divRes;
   }
 
@@ -151,12 +155,13 @@ export abstract class SqrtPriceMath {
       [sqrtRatioAX96, sqrtRatioBX96] = [sqrtRatioBX96, sqrtRatioAX96];
     }
     let sqrtPriceDiff = JSBI.subtract(sqrtRatioBX96, sqrtRatioAX96);
-    let divRes = roundUp ? FullMath.mulDivRoundingUp(
-      JSBI.leftShift(amountB, JSBI.BigInt(96)),
-      JSBI.BigInt(1),
-      sqrtPriceDiff
-    ) :
-    JSBI.divide(JSBI.leftShift(amountB, JSBI.BigInt(96)), sqrtPriceDiff);
+    let divRes = roundUp
+      ? FullMath.mulDivRoundingUp(
+          JSBI.leftShift(amountB, JSBI.BigInt(96)),
+          JSBI.BigInt(1),
+          sqrtPriceDiff
+        )
+      : JSBI.divide(JSBI.leftShift(amountB, JSBI.BigInt(96)), sqrtPriceDiff);
     return divRes;
   }
 
@@ -212,6 +217,4 @@ export abstract class SqrtPriceMath {
       return JSBI.subtract(sqrtPX96, quotient);
     }
   }
-
-
 }

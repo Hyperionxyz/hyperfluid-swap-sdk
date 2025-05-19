@@ -16,19 +16,19 @@ async function main() {
   const token0 = new Token(
     1,
     getLongAddress(
-      "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b"
+      "0x000000000000000000000000000000000000000000000000000000000000000a"
     ),
-    6,
-    "usdt",
+    8,
+    "apt",
     "token0"
   );
   const token1 = new Token(
     1,
     getLongAddress(
-      "0xbae207659db88bea0cbead6da0ed00aac12edcdda169e591cd41c94180b46f3b"
+      "0xb36527754eb54d7ff55daf13bcb54b42b88ec484bd6f0e3b2e0d1db169de6451"
     ),
-    6,
-    "usdc",
+    8,
+    "ami",
     "token1"
   );
 
@@ -38,7 +38,7 @@ async function main() {
   // second one is pool id (pool object address).
   // when give offset 0, it means return all the available ticks.
   let poolId =
-    "0xd3894aca06d5f42b27c89e6f448114b3ed6a1ba07f992a58b2126c71dd83c127";
+    "0x617a777d6a19da5bf346af49a7f648acce66db9dd3f98c78bd10ed556708a7da";
   let a: any = await fetchPoolTickInfo(100, poolId);
   const poolInfo = a.data.api.getPoolTickInfo;
 
@@ -73,15 +73,19 @@ async function main() {
   // calc swap token_a to token_b when give a exact input
   const a2bExactInput = await Trade.fromRoute(
     new Route([pool_0_1], token0, token1),
-    CurrencyAmount.fromRawAmount(token0, 10000000), // 10 usdt
+    CurrencyAmount.fromRawAmount(token0, 10000000000), // 10 usdt
     TradeType.EXACT_INPUT
+  );
+
+  const a2bExactInputPool = await pool_0_1.getOutputAmount(
+    CurrencyAmount.fromRawAmount(token0, 10000000000)
   );
 
   // call view func to verify the result
   const b2aExactOutputByView = await getAmountOut(
     poolId,
     token0.address,
-    10000000
+    10000000000
   );
   const a2bExactInputByView = await getAmountOut(
     poolId,
@@ -94,17 +98,21 @@ async function main() {
     a2bExactInput.outputAmount.quotient.toString()
   );
   console.log(
-    "how-much-output-when-a2b-exact-input-by-view: ",
-    a2bExactInputByView.toString()
+    "how-much-output-when-a2b-exact-input-pool: ",
+    a2bExactInputPool[0].quotient.toString()
   );
-  console.log(
-    "how-much-input-when-b2a-exact-output: ",
-    b2aExactOutput.inputAmount.quotient.toString()
-  );
-  console.log(
-    "how-much-input-when-b2a-exact-output-by-view: ",
-    b2aExactOutputByView.toString()
-  );
+  // console.log(
+  //   "how-much-output-when-a2b-exact-input-by-view: ",
+  //   a2bExactInputByView.toString()
+  // );
+  // console.log(
+  //   "how-much-input-when-b2a-exact-output: ",
+  //   b2aExactOutput.inputAmount.quotient.toString()
+  // );
+  // console.log(
+  //   "how-much-input-when-b2a-exact-output-by-view: ",
+  //   b2aExactOutputByView.toString()
+  // );
 }
 
 (async () => {
