@@ -69,22 +69,20 @@ export class Pool {
   ) {
     invariant(Number.isInteger(fee) && fee < 1_000_000, "FEE");
 
-    const frontCurrentSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent-1);
+    const frontCurrentSqrtRatioX96 = TickMath.getSqrtRatioAtTick(
+      tickCurrent == TickMath.MIN_TICK ? tickCurrent : tickCurrent - 1
+    );
     const tickCurrentSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent);
-    const nextTickSqrtRatioX96 = TickMath.getSqrtRatioAtTick(tickCurrent + 1);
+    const nextTickSqrtRatioX96 = TickMath.getSqrtRatioAtTick(
+      tickCurrent == TickMath.MAX_TICK ? tickCurrent : tickCurrent + 1
+    );
     invariant(
-      JSBI.greaterThan(
-        JSBI.BigInt(sqrtRatioX96),
-        frontCurrentSqrtRatioX96
-      ), 
+      JSBI.greaterThan(JSBI.BigInt(sqrtRatioX96), frontCurrentSqrtRatioX96),
       "PRICE_BOUNDS"
     );
-    if(JSBI.lessThan(
-      JSBI.BigInt(sqrtRatioX96),
-      tickCurrentSqrtRatioX96
-    )) {
+    if (JSBI.lessThan(JSBI.BigInt(sqrtRatioX96), tickCurrentSqrtRatioX96)) {
       sqrtRatioX96 = tickCurrentSqrtRatioX96;
-    };
+    }
     invariant(
       JSBI.greaterThanOrEqual(
         JSBI.BigInt(sqrtRatioX96),
